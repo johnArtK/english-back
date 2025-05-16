@@ -22,41 +22,4 @@ export class UserService {
     return await this.userRepository.findOne({ where: { id } });
   }
 
-  // async addUserWord(userId: number, newWord: WordDto): Promise<Word> {
-  //   const user = await this.userRepository.findOne({
-  //     where: { id: userId },
-  //     relations: ['words'],
-  //   });
-
-  //   if (!user) {
-  //     throw new Error('User not found');
-  //   }
-
-  //   const word = new Word();
-  //   word.value = newWord.value;
-  //   word.userId = user.id;
-
-  //   return this.userRepository.manager.save(word);
-  // }
-
-  // async deleteUserWord(userId: number, wordId: number) {
-  //   const word = await this.userRepository.manager.findOne(Word, {
-  //     where: { id: wordId, userId },
-  //   });
-
-  //   if (!word) {
-  //     throw new Error('Word not found or does not belong to the user');
-  //   }
-
-  //   return await this.userRepository.manager.remove(Word, word);
-  // }
-
-  // async getUserWords(userId: number): Promise<Word[]> {
-  //   const user = await this.userRepository.findOne({
-  //     where: { id: userId },
-  //     relations: ['words'],
-  //   });
-
-  //   return user?.words || [];
-  // }
 }

@@ -13,26 +13,45 @@ export class WordService {
     private wordRepository: Repository<Word>,
   ) {}
 
-  async getUnlearnedWords(userId: number): Promise<Word[]> {
+  async getUnlearnedWords(
+    userId: number,
+    page = 1,
+    limit = 20,
+  ): Promise<{ data: Word[]; total: number }> {
     const learnedWordIds = await this.userWordRepository.find({
       where: { user: { id: userId }, isLearned: true },
       relations: ['word'],
+      select: { word: { id: true } },
     });
 
     const learnedIds = learnedWordIds.map((uw) => uw.word.id);
 
-    return this.wordRepository.find({
+    const [data, total] = await this.wordRepository.findAndCount({
       where: learnedIds.length ? { id: Not(In(learnedIds)) } : {},
+      skip: (page - 1) * limit,
+      take: limit,
+      order: { id: 'ASC' },
     });
+
+    return { data, total };
   }
 
-  async getLearnedWords(userId: number): Promise<Word[]> {
-    const learnedWords = await this.userWordRepository.find({
+  async getLearnedWords(
+    userId: number,
+    page = 1,
+    limit = 20,
+  ): Promise<{ data: Word[]; total: number }> {
+    const [userWords, total] = await this.userWordRepository.findAndCount({
       where: { user: { id: userId }, isLearned: true },
       relations: ['word'],
+      skip: (page - 1) * limit,
+      take: limit,
+      order: { id: 'ASC' },
     });
 
-    return learnedWords.map((uw) => uw.word);
+    const data = userWords.map((uw) => uw.word);
+
+    return { data, total };
   }
 
   async markWordAsLearned(userId: number, wordId: number): Promise<void> {
@@ -63,42 +82,4 @@ export class WordService {
       await this.userWordRepository.save(userWord);
     }
   }
-
-  // async addUserWord(userId: number, newWord: WordDto): Promise<UserWord> {
-  //   const user = await this.userRepository.findOne({
-  //     where: { id: userId },
-  //     relations: ['words'],
-  //   });
-
-  //   if (!user) {
-  //     throw new Error('User not found');
-  //   }
-
-  //   const word = new UserWord();
-  //   word.value = newWord.value;
-  //   word.userId = user.id;
-
-  //   return this.userRepository.manager.save(word);
-  // }
-
-  // async deleteUserWord(userId: number, wordId: number) {
-  //   const word = await this.userRepository.manager.findOne(UserWord, {
-  //     where: { id: wordId, userId },
-  //   });
-
-  //   if (!word) {
-  //     throw new Error('Word not found or does not belong to the user');
-  //   }
-
-  //   return await this.userRepository.manager.remove(UserWord, word);
-  // }
-
-  // async getUserWords(userId: number): Promise<UserWord[]> {
-  //   const user = await this.userRepository.findOne({
-  //     where: { id: userId },
-  //     relations: ['words'],
-  //   });
-
-  //   return user?.words || [];
-  // }
 }
