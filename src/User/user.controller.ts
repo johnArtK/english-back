@@ -17,10 +17,7 @@ import { JwtAuthGuard } from 'src/auth/jwt-strategy/jwt-auth.guard';
 @Controller('words')
 export class UserController {
   constructor(private userService: UserService) {}
-@Get()
-async get() {
-  this.userService.createW()
-}
+
   // @UseGuards(JwtAuthGuard)
   // @Get('/')
   // async getWords(@Req() req: Request, @Res() res: Response) {
