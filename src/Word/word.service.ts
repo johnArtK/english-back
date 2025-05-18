@@ -13,10 +13,24 @@ export class WordService {
     private wordRepository: Repository<Word>,
   ) {}
 
+  async getAllWords(
+    page = 1,
+    size = 20,
+  ): Promise<{ data: Word[]; total: number }> {
+
+    const [data, total] = await this.wordRepository.findAndCount({
+      skip: (page - 1) * size,
+      take: size,
+      order: { id: 'ASC' },
+    });
+
+    return { data, total };
+  }
+
   async getUnlearnedWords(
     userId: number,
     page = 1,
-    limit = 20,
+    size = 20,
   ): Promise<{ data: Word[]; total: number }> {
     const learnedWordIds = await this.userWordRepository.find({
       where: { user: { id: userId }, isLearned: true },
@@ -28,8 +42,8 @@ export class WordService {
 
     const [data, total] = await this.wordRepository.findAndCount({
       where: learnedIds.length ? { id: Not(In(learnedIds)) } : {},
-      skip: (page - 1) * limit,
-      take: limit,
+      skip: (page - 1) * size,
+      take: size,
       order: { id: 'ASC' },
     });
 
