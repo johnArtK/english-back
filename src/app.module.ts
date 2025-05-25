@@ -8,12 +8,12 @@ import { WordModule } from './Word/word.module';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: '111',
-      database: 'english_db',
-      entities: ['dist/**/*.entity{.ts,.js}'],
+      host: process.env.DB_HOST,
+      port: parseInt(process.env.DB_PORT || '', 10),
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_DATABASE,
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
     UserModule,
