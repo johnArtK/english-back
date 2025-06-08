@@ -8,7 +8,9 @@ import { WordModule } from './Word/word.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true, // доступен везде
+      isGlobal: true,
+      envFilePath:
+        process.env.NODE_ENV === 'production' ? '.env' : '.env.development',
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],

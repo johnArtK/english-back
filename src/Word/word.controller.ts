@@ -16,7 +16,7 @@ export class WordController {
 
   @Get()
   async getAllWords(@Query('page') page, @Query('size') size) {
-    return this.wordService.getAllWords(page, size);
+    return await this.wordService.getAllWords(page, size);
   }
 
   @UseGuards(JwtAuthGuard)
